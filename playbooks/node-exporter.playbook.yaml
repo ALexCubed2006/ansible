@@ -1,0 +1,82 @@
+---
+- name: Ensure Node exporter present
+  hosts: all
+  become: yes
+  vars:
+    template_path: /home/kali/devops/ansible/templates/node_exporter.service.j2
+    node_exporter_version: "1.8.2"
+    node_exporter_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+    node_exporter_bin_path: /usr/local/bin/node_exporter
+    node_exporter_user: node_exporter
+    node_exporter_download_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}.tar.gz"
+
+  tasks:
+
+  - name: Create node-exporter user
+    ansible.builtin.user:
+      name: "{{ node_exporter_user }}"
+      system: yes
+      shell: /usr/sbin/nologin
+      create_home: no
+
+  - name: Download Node exporter tar
+    ansible.builtin.get_url:
+      url: "{{ node_exporter_download_url }}"
+      dest: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+      mode: "0644"
+    register: download_archive
+
+  - name: Unarchive Node exporter
+    ansible.builtin.unarchive:
+      src: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+      dest: /tmp
+      remote_src: yes
+    notify: Restart Node exporter
+
+  - name: Copy node_exporter binary to /usr/local/bin
+    ansible.builtin.copy:
+      src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}/node_exporter"
+      dest: "{{ node_exporter_bin_path }}"
+      owner: root
+      group: root
+      mode: "0755"
+      remote_src: yes
+    notify: Restart Node exporter
+
+  - name: Create systemd unit
+    ansible.builtin.template:
+      src: "{{ template_path }}"
+      dest: /etc/systemd/system/node_exporter.service
+      owner: root
+      group: root
+      mode: "0644"
+    notify: Restart Node exporter
+
+  - name: Start Node exporter
+    ansible.builtin.service:
+      name: node_exporter
+      state: started
+      enabled: yes
+      daemon_reload: yes
+
+  - name: Remove tmp files
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+    - "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+    - "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}"
+
+  - name: Allow port 9100 in ufw
+    community.general.ufw:
+      rule: allow
+      port: '9100'
+      proto: tcp
+    when: ansible_facts.os_family == "Debian"
+
+  handlers:
+  - name: Restart Node exporter
+    ansible.builtin.systemd:
+      name: node_exporter
+      state: restarted
+      daemon_reload: yes

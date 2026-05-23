@@ -1,0 +1,38 @@
+---
+- name: Present Fail2ban
+  hosts: all
+  become: true
+
+  tasks:
+  
+  - name: Present Fail2ban
+    ansible.builtin.apt:
+      name: fail2ban
+      state: present
+      update_cache: yes
+
+  - name: Start Fail2ban
+    ansible.builtin.service:
+      name: fail2ban
+      state: started
+      enabled: yes
+    
+- name: Copy Fail2ban config
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Copy Fail2ban config
+    ansible.builtin.copy:
+      src: /home/kali/devops/ansible/configs/f2b/jail.local
+      dest: /etc/fail2ban/jail.local
+      owner: root
+      group: root
+      mode: '644'
+    notify: Restart Fail2ban
+  
+  handlers:
+  - name: Restart Fail2ban
+    ansible.builtin.service:
+      name: fail2ban
+      state: restarted
