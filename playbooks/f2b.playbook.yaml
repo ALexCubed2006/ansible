@@ -3,8 +3,11 @@
   hosts: all
   become: true
 
+  vars:
+    jail_template_local: /home/kali/devops/ansible/configs/f2b/jail.local
+    jail_template_dest: /etc/fail2ban/jail.local
+
   tasks:
-  
   - name: Present Fail2ban
     ansible.builtin.apt:
       name: fail2ban
@@ -24,11 +27,11 @@
   tasks:
   - name: Copy Fail2ban config
     ansible.builtin.copy:
-      src: /home/kali/devops/ansible/configs/f2b/jail.local
-      dest: /etc/fail2ban/jail.local
+      src: "{{ jail_template_local }}"
+      dest: "{{ jail_template_dest }}"
       owner: root
       group: root
-      mode: '644'
+      mode: '0644'
     notify: Restart Fail2ban
   
   handlers:
