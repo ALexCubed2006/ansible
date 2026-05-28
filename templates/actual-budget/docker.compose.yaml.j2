@@ -1,0 +1,13 @@
+services:
+  actual:
+    image: actualbudget/actual-server:{{ actual_version }}
+    container_name: actual_budget
+    restart: unless-stopped
+    ports:
+      - "{{ actual_port }}:5006"
+    volumes:
+      - "{{ actual_data_dir }}/actual-data:/data"
+    environment: {}
+
+    labels:
+      - "traefik.enable=false"

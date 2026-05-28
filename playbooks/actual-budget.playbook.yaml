@@ -1,0 +1,57 @@
+- name: Deploy Actial Budget
+  hosts: all
+  become: true
+
+  vars:
+    actual_port: 5006
+    actual_data_dir: /opt/actual_data
+    actual_version: latest
+
+    docker_compose_template: /home/kali/devops/ansible/templates/actual-budget/docker.compose.yaml.j2
+  
+  tasks:    
+    - name: Create data dir
+      ansible.builtin.file:
+        path: "{{ actual_data_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+    
+    - name: Copy docker-compose template
+      ansible.builtin.template:
+        src: "{{ docker_compose_template }}"
+        dest: "{{ actual_data_dir }}/docker-compose.yaml"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Start Actual-budget app
+      community.docker.docker_compose_v2:
+        project_src: "{{ actual_data_dir }}"
+        state: present
+        pull: missing
+        remove_orphans: yes
+
+
+    
+- name: Configure network
+  hosts: all
+  become: true
+
+  vars:
+    actual_port: 5006
+
+  tasks:
+    - name: Open ufw port
+      community.general.ufw:
+        rule: allow
+        port: "{{ actual_port }}"
+        proto: tcp
+      
+    - name: Wait for port {{ actual_port }} to become available
+      ansible.builtin.wait_for:
+        port: "{{ actual_port }}"
+        state: started
+        delay: 5
+        timeout: 60
