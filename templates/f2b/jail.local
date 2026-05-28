@@ -1,6 +1,6 @@
 [DAFAULT]
 ignore-ip = 127.0.0.1/8 ::1 192.168.8.100
-bantime = 1d
+bantime = -1
 findtime = 1d
 maxretry = 3
 backend = systemd

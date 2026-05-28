@@ -3,10 +3,6 @@
   hosts: all
   become: true
 
-  vars:
-    jail_template_local: /home/kali/devops/ansible/configs/f2b/jail.local
-    jail_template_dest: /etc/fail2ban/jail.local
-
   tasks:
   - name: Present Fail2ban
     ansible.builtin.apt:
@@ -23,6 +19,10 @@
 - name: Copy Fail2ban config
   hosts: all
   become: true
+
+  vars:
+    jail_template_local: /home/kali/devops/ansible/templates/f2b/jail.local
+    jail_template_dest: /etc/fail2ban/jail.local
 
   tasks:
   - name: Copy Fail2ban config
