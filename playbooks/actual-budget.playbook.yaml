@@ -1,4 +1,5 @@
-- name: Deploy Actial Budget
+---
+- name: Deploy Actual Budget
   hosts: all
   become: true
 
@@ -6,10 +7,9 @@
     actual_port: 5006
     actual_data_dir: /opt/actual_data
     actual_version: latest
-
     docker_compose_template: /home/kali/devops/ansible/templates/actual-budget/docker.compose.yaml.j2
-  
-  tasks:    
+
+  tasks:
     - name: Create data dir
       ansible.builtin.file:
         path: "{{ actual_data_dir }}"
@@ -17,7 +17,15 @@
         owner: root
         group: root
         mode: "0755"
-    
+
+    - name: Create Actual data volume dir
+      ansible.builtin.file:
+        path: "{{ actual_data_dir }}/data"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Copy docker-compose template
       ansible.builtin.template:
         src: "{{ docker_compose_template }}"
@@ -31,27 +39,83 @@
         project_src: "{{ actual_data_dir }}"
         state: present
         pull: missing
-        remove_orphans: yes
+        remove_orphans: true
 
 
-    
-- name: Configure network
+
+- name: Configure network and nginx
   hosts: all
   become: true
 
   vars:
     actual_port: 5006
 
+    budget_server_name: budget.darpir.ru
+    site_web_root: /var/www/html
+
+    nginx_pub_crt: /var/www/ssl/pub.pem
+    nginx_privkey: /var/www/ssl/privkey.pem
+
+    nginx_websocket_map_template: /home/kali/devops/ansible/templates/actual-budget/websocket-map.conf.j2
+    nginx_budget_template: /home/kali/devops/ansible/templates/nginx/actual-budget.conf.j2
+
+    ufw_configure: false
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
   tasks:
-    - name: Open ufw port
+    - name: Allow HTTP and HTTPS in UFW
       community.general.ufw:
         rule: allow
-        port: "{{ actual_port }}"
+        port: "{{ item }}"
         proto: tcp
-      
-    - name: Wait for port {{ actual_port }} to become available
-      ansible.builtin.wait_for:
-        port: "{{ actual_port }}"
+      loop:
+        - "80"
+        - "443"
+      when: ansible_facts.get('ufw', {}).get('status') == 'enabled' or ufw_configure | bool
+
+    - name: Deploy WebSocket map for proxy
+      ansible.builtin.template:
+        src: "{{ nginx_websocket_map_template }}"
+        dest: /etc/nginx/conf.d/00-websocket-map.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload nginx
+
+    - name: Deploy budget.darpir.ru vhost
+      ansible.builtin.template:
+        src: "{{ nginx_budget_template }}"
+        dest: "/etc/nginx/sites-available/{{ budget_server_name }}.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload nginx
+
+    - name: Enable budget vhost
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/{{ budget_server_name }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ budget_server_name }}.conf"
+        state: link
+      notify: Reload nginx
+
+    - name: Validate nginx configuration
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
         state: started
+        enabled: true
+
+    - name: Wait for Actual Budget on localhost
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ actual_port }}"
+        timeout: 120
         delay: 5
-        timeout: 60
