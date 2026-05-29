@@ -1,6 +1,16 @@
+{% set _budget_acl = budget_allowed_ips | default([]) %}
+
 server {
     listen 80;
     server_name {{ budget_server_name }};
+
+    {% if _budget_acl | length > 0 %}
+    {% for ip in _budget_acl %}
+        allow {{ ip }};
+    {% endfor %}
+        deny all;
+    {% endif %}
+
     return 308 https://$host$request_uri;
 }
 
@@ -21,6 +31,13 @@ server {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 
     client_max_body_size 50m;
+
+    {% if _budget_acl | length > 0 %}
+    {% for ip in _budget_acl %}
+        allow {{ ip }};
+    {% endfor %}
+        deny all;
+    {% endif %}
 
     location / {
         proxy_pass http://127.0.0.1:{{ actual_port }};
