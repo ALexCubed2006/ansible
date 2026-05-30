@@ -1,0 +1,6 @@
+- name: Place systemd-journald configs
+  hosts: all
+  become: true
+
+  roles:
+    - journald

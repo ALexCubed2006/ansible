@@ -1,0 +1,6 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Restart systemd-journald
+  ansible.builtin.systemd:
+    name: systemd-journald
+    state: restarted

@@ -1,0 +1,19 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Ensure journald drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ journald_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy config files
+  ansible.builtin.copy:
+    src: default.conf
+    dest: "{{ journald_config_dir }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart systemd-journald
+
