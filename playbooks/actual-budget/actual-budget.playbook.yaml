@@ -4,7 +4,7 @@
   become: true
 
   vars_files:
-    - "{{ ansible_dir }}/vaults/actual-budget.secrets.yaml"
+    - "{{ playbook_dir }}/../../vaults/actual-budget.secrets.yaml"
 
   roles:
     - actual_budget
