@@ -6,8 +6,8 @@ default_conf_path: "{{ ansible_dir }}/roles/nginx/templates/nginx.conf"
 nginx_conf_path_dest: /etc/nginx/nginx.conf
 default_conf_path_dest: /etc/nginx/sites-available/default
 
-nginx_pub_crt: /var/www/ssl/pub.pem
-nginx_privkey: /var/www/ssl/privkey.pem
+nginx_pub_crt: "{{ ssl_cert_dir }}/pub.pem"
+nginx_privkey: "{{ ssl_cert_dir }}/privkey.pem"
 
 nginx_default_ufw_rules:
   - comment: nginx-http

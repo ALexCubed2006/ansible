@@ -12,8 +12,6 @@
     state: started
     enabled: yes
 
-
-
 - name: Copy Fail2ban config
   ansible.builtin.copy:
     src: "{{ jail_template_local }}"

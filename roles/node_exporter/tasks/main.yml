@@ -54,10 +54,3 @@
   loop:
   - "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
   - "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}"
-
-- name: Allow port 9100 in ufw
-  community.general.ufw:
-    rule: allow
-    port: '9100'
-    proto: tcp
-  when: ansible_facts.os_family == "Debian"

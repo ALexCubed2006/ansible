@@ -8,8 +8,8 @@ docker_compose_template: "{{ ansible_dir }}/roles/actual_budget/templates/docker
 
 budget_server_name: budget.darpir.ru
 site_web_root: /var/www/html
-nginx_pub_crt: /var/www/ssl/pub.pem
-nginx_privkey: /var/www/ssl/privkey.pem
+nginx_pub_crt: "{{ ssl_cert_dir }}/pub.pem"
+nginx_privkey: "{{ ssl_cert_dir }}/privkey.pem"
 budget_allowed_ips: "{{ vault_budget_allowed_ips | default([]) }}"
 nginx_websocket_map_template: "{{ ansible_dir }}/roles/actual_budget/templates/websocket-map.conf.j2"
 nginx_budget_template: "{{ ansible_dir }}/roles/actual_budget/templates/actual-budget.conf.j2"

@@ -1,4 +1,3 @@
-#SPDX-License-Identifier: MIT-0
 ---
 - name: Create data dir
   ansible.builtin.file:
@@ -16,7 +15,7 @@
     group: root
     mode: "0755"
 
-- name: Copy docker-compose template
+- name: Deploy docker-compose
   ansible.builtin.template:
     src: "{{ docker_compose_template }}"
     dest: "{{ actual_data_dir }}/docker-compose.yaml"
@@ -24,49 +23,12 @@
     group: root
     mode: "0644"
 
-- name: Start Actual-budget app
+- name: Start Actual Budget
   community.docker.docker_compose_v2:
     project_src: "{{ actual_data_dir }}"
     state: present
     pull: missing
     remove_orphans: true
-
-
-
-- name: Deploy WebSocket map for proxy
-  ansible.builtin.template:
-    src: "{{ nginx_websocket_map_template }}"
-    dest: /etc/nginx/conf.d/00-websocket-map.conf
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Reload nginx
-
-- name: Deploy budget.darpir.ru vhost
-  ansible.builtin.template:
-    src: "{{ nginx_budget_template }}"
-    dest: "/etc/nginx/sites-available/{{ budget_server_name }}.conf"
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Reload nginx
-
-- name: Enable budget vhost
-  ansible.builtin.file:
-    src: "/etc/nginx/sites-available/{{ budget_server_name }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ budget_server_name }}.conf"
-    state: link
-  notify: Reload nginx
-
-- name: Validate nginx configuration
-  ansible.builtin.command: nginx -t
-  changed_when: false
-
-- name: Ensure nginx is running
-  ansible.builtin.service:
-    name: nginx
-    state: started
-    enabled: true
 
 - name: Wait for Actual Budget on localhost
   ansible.builtin.wait_for:

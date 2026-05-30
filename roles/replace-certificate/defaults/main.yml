@@ -2,7 +2,7 @@
 ---
 dest_dir: /var/www/ssl
 
-    cert_owner: www-data
+cert_owner: www-data
 
-    privkey_src:
-    pub_src:
+privkey_src: /home/kali
+pub_src: /home/kali

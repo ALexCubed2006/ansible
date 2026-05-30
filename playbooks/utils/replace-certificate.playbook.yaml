@@ -3,31 +3,13 @@
   hosts: all
   become: true
 
-  vars:
-    dest_dir: /var/www/ssl
+  vars_prompt:
+    - name: privkey_src
+      prompt: "Path to private key"
+      private: false
+    - name: pub_src
+      prompt: "Path to public certificate"
+      private: false
 
-    cert_owner: www-data
-
-    privkey_src:
-    pub_src:
-
-  tasks:
-  - name: Ensure dest directory exists
-    ansible.builtin.file:
-      path: "{{ dest_dir }}"
-      state: directory
-      owner: "{{ cert_owner }}"
-      group: "{{ cert_owner }}"
-      mode: "0700"
-
-  - name: Copy certificate files
-    ansible.builtin.copy:
-      src: "{{ item.source }}"
-      dest: "{{ item.destination }}"
-      owner: "{{ cert_owner }}"
-      group: "{{ cert_owner }}"
-      mode: "0400"
-      
-    loop:
-      - { source: "{{ privkey_src }}", destination: "{{ dest_dir }}/privkey.pem" }
-      - { source: "{{ pub_src }}", destination: "{{ dest_dir }}/pub.pem" }
+  roles:
+    - replace-certificate

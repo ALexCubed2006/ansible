@@ -3,56 +3,5 @@
   hosts: all
   become: true
 
-  vars:
-    nginx_conf_path: /home/kali/devops/ansible/configs/nginx/nginx.conf
-    default_conf_path: /home/kali/devops/ansible/configs/nginx/default
-
-    nginx_conf_path_dest: /etc/nginx/nginx.conf
-    default_conf_path_dest: /etc/nginx/sites-available/default
-
-    nginx_pub_crt: /var/www/ssl/pub.pem
-    nginx_privkey: /var/www/ssl/privkey.pem
-
-  tasks:
-  
-  - name: Present Nginx
-    ansible.builtin.apt:
-      name: nginx
-      state: present
-      update_cache: yes
-
-  - name: Start Nginx
-    ansible.builtin.service:
-      name: nginx
-      state: started
-      enabled: yes
-    
-
-- name: Copy Nginx configs
-  hosts: all
-  become: true
-
-  tasks:
-  - name: Copy Nginx config
-    ansible.builtin.copy:
-      src: "{{ nginx_conf_path }}"
-      dest: "{{ nginx_conf_path_dest }}"
-      owner: root
-      group: root
-      mode: '644'
-    notify: Restart Nginx
-  
-  - name: Copy site config
-    ansible.builtin.copy:
-      src: "{{ default_conf_path }}"
-      dest: "{{ default_conf_path_dest }}"
-      owner: root
-      group: root
-      mode: '644'
-    notify: Restart Nginx
-
-  handlers:
-  - name: Restart Nginx
-    ansible.builtin.service:
-      name: nginx
-      state: restarted
+  roles:
+    - nginx

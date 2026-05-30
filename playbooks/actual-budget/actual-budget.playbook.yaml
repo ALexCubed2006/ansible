@@ -3,11 +3,8 @@
   hosts: all
   become: true
 
-  vars:
-    actual_port: 5006
-    actual_data_dir: /opt/actual_data
-    actual_version: latest
-    docker_compose_template: /home/kali/devops/ansible/templates/actual-budget/docker-compose.yaml.j2
+  vars_files:
+    - "{{ ansible_dir }}/vaults/actual-budget.secrets.yaml"
 
   tasks:
     - name: Create data dir

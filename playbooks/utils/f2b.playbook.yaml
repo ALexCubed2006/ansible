@@ -2,40 +2,9 @@
 - name: Present Fail2ban
   hosts: all
   become: true
-
-  tasks:
-  - name: Present Fail2ban
-    ansible.builtin.apt:
-      name: fail2ban
-      state: present
-      update_cache: yes
-
-  - name: Start Fail2ban
-    ansible.builtin.service:
-      name: fail2ban
-      state: started
-      enabled: yes
-    
-- name: Copy Fail2ban config
-  hosts: all
-  become: true
-
-  vars:
-    jail_template_local: /home/kali/devops/ansible/templates/f2b/jail.local
-    jail_template_dest: /etc/fail2ban/jail.local
-
-  tasks:
-  - name: Copy Fail2ban config
-    ansible.builtin.copy:
-      src: "{{ jail_template_local }}"
-      dest: "{{ jail_template_dest }}"
-      owner: root
-      group: root
-      mode: '0644'
-    notify: Restart Fail2ban
   
-  handlers:
-  - name: Restart Fail2ban
-    ansible.builtin.service:
-      name: fail2ban
-      state: restarted
+  vars_files:
+    - "{{ ansible_dir }}/vaults/actual-budget.secrets.yaml"
+
+  roles:
+    - f2b
