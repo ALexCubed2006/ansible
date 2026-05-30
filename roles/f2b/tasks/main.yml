@@ -1,0 +1,24 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Present Fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+
+- name: Start Fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: yes
+
+
+
+- name: Copy Fail2ban config
+  ansible.builtin.copy:
+    src: "{{ jail_template_local }}"
+    dest: "{{ jail_template_dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Fail2ban

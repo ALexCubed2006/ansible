@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+ufw_enabled: true
+ufw_default_incoming: deny
+ufw_default_outgoing: allow
+ufw_state: enabled
+ufw_rules: []
+
+
+ssh_ufw_rules:
+  - comment: ssh-port
+    rule: allow
+    port: "22"
+    proto: tcp

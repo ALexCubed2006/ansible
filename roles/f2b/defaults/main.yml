@@ -1,0 +1,4 @@
+#SPDX-License-Identifier: MIT-0
+---
+jail_template_local: /home/kali/devops/ansible/templates/f2b/jail.local
+jail_template_dest: /etc/fail2ban/jail.local

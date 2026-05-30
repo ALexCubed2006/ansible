@@ -1,0 +1,37 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Ensure ufw is present
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: true
+  when:
+    - ufw_enabled | bool
+    - ansible_os_family == "Debian"
+    
+- name: Set ufw default policies
+  community.general.ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: incoming, policy: "{{ ufw_default_incoming }}" }
+    - { direction: outgoing, policy: "{{ ufw_default_outgoing }}" }
+  when:
+    - ufw_enabled | bool
+
+- name: Apply ufw rules
+  community.general.ufw:
+    rule: "{{ item.rule | default('allow') }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default(omit) }}"
+    from_ip: "{{ item.from_ip | default(omit) }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ ufw_rules }}"
+  when:
+    - ufw_enabled | bool
+    - ufw_rules | length > 0
+
+- name: Enable ufw
+  community.general.ufw:
+    state: "{{ ufw_state | default('enabled') }}"
+  when: ufw_enabled | bool

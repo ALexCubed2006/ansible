@@ -1,0 +1,21 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Ensure dest directory exists
+  ansible.builtin.file:
+    path: "{{ dest_dir }}"
+    state: directory
+    owner: "{{ cert_owner }}"
+    group: "{{ cert_owner }}"
+    mode: "0700"
+
+- name: Copy certificate files
+  ansible.builtin.copy:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ cert_owner }}"
+    group: "{{ cert_owner }}"
+    mode: "0400"
+    
+  loop:
+    - { source: "{{ privkey_src }}", destination: "{{ dest_dir }}/privkey.pem" }
+    - { source: "{{ pub_src }}", destination: "{{ dest_dir }}/pub.pem" }

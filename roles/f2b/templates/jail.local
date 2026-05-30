@@ -1,0 +1,14 @@
+[DAFAULT]
+ignore-ip = 127.0.0.1/8 ::1 192.168.8.100
+bantime = -1
+findtime = 1d
+maxretry = 3
+backend = systemd
+banaction = nftables-multiport
+banaction_allports = nftables-allports
+
+[sshd]
+enabled = true
+port = ssh
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s

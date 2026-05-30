@@ -1,0 +1,13 @@
+services:
+  actual-server:
+    image: actualbudget/actual-server:{{ actual_version }}
+    container_name: actual-budget
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:{{ actual_port }}:5006"
+    volumes:
+      - {{ actual_data_dir }}/data:/data
+    environment:
+      - ACTUAL_PORT=5006
+
+

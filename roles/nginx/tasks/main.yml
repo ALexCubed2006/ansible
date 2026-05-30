@@ -1,0 +1,33 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Present Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Start Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+
+
+- name: Copy Nginx config
+  ansible.builtin.copy:
+    src: "{{ nginx_conf_path }}"
+    dest: "{{ nginx_conf_path_dest }}"
+    owner: root
+    group: root
+    mode: '644'
+  notify: Restart Nginx
+
+- name: Copy site config
+  ansible.builtin.copy:
+    src: "{{ default_conf_path }}"
+    dest: "{{ default_conf_path_dest }}"
+    owner: root
+    group: root
+    mode: '644'
+  notify: Restart Nginx
