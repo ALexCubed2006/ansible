@@ -1,6 +1,13 @@
-#SPDX-License-Identifier: MIT-0
 ---
 nginx_conf_path_dest: /etc/nginx/nginx.conf
+
+ssl_cert_dir: /var/www/ssl
+site_server_name: site.darpir.ru
+budget_server_name: budget.darpir.ru
+site_web_root: /var/www/html
+actual_port: 5006
+
+budget_allowed_ips: "{{ vault_budget_allowed_ips | default([]) }}"
 
 nginx_pub_crt: "{{ ssl_cert_dir }}/pub.pem"
 nginx_privkey: "{{ ssl_cert_dir }}/privkey.pem"
@@ -10,7 +17,6 @@ nginx_default_ufw_rules:
     rule: allow
     port: "80"
     proto: tcp
-    
   - comment: nginx-https
     rule: allow
     port: "443"

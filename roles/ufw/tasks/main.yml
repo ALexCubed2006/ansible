@@ -6,8 +6,8 @@
     state: present
     update_cache: true
   when:
-    - ufw_enabled | bool
-    - ansible_os_family == "Debian"
+  - ufw_enabled | bool
+  - ansible_facts['os_family'] == "Debian"
     
 - name: Set ufw default policies
   community.general.ufw:
