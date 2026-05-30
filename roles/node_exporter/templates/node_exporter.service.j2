@@ -7,9 +7,10 @@ User={{ node_exporter_user }}
 Group={{ node_exporter_user }}
 Type=simple
 ExecStart={{ node_exporter_bin_path }} \
+  --web.listen-address=127.0.0.1:9100 \
+  --web.config.file=/etc/node_exporter/web-config.yaml \
   --collector.systemd \
-  --collector.processes \
-  --web.config.file=/etc/node_exporter/web-config.yaml
+  --collector.processes
 Restart=always
 RestartSec=5
 

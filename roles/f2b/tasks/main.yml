@@ -14,7 +14,7 @@
 
 - name: Copy Fail2ban config
   ansible.builtin.copy:
-    src: "{{ jail_template_local }}"
+    src: jail.local
     dest: "{{ jail_template_dest }}"
     owner: root
     group: root
