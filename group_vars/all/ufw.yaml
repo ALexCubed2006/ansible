@@ -1,0 +1,19 @@
+ufw_enabled: true
+ufw_state: enabled
+ufw_default_incoming: deny
+ufw_default_outgoing: allow
+ufw_logging: "on"
+
+ufw_base_rules:
+  - comment: ssh-admin
+    rule: allow
+    port: "22"
+    proto: tcp
+
+ufw_rules: >-
+  {{
+    ufw_base_rules
+    + (nginx_default_ufw_rules | default([]))
+    + (nginx_budget_ufw_rules | default([]))
+    + (actual_budget_ufw_rules | default([]))
+  }}
