@@ -21,13 +21,18 @@
     mode: '644'
   notify: Reload nginx
 
-- name: Copy default site config
-  ansible.builtin.copy:
-    src: "{{ default_conf_path }}"
-    dest: "{{ default_conf_path_dest }}"
-    owner: root
-    group: root
-    mode: '644'
+- name: Deploy site vhost
+  ansible.builtin.template:
+    src: default.j2
+    dest: "/etc/nginx/sites-available/{{ site_server_name }}.conf"
+  notify: Reload nginx
+
+- name: Enable site vhost
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ site_server_name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ site_server_name }}.conf"
+    state: link
+    force: true
   notify: Reload nginx
 
 - name: Deploy WebSocket map
