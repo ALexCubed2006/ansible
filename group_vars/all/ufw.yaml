@@ -10,10 +10,24 @@ ufw_base_rules:
     port: "22"
     proto: tcp
 
+node_exporter_ufw_rules: >-
+  {%- set rules = [] -%}
+  {%- for ip in vault_budget_allowed_ips | default([]) -%}
+  {%- set _ = rules.append({
+        'comment': 'node-exporter-' ~ ip,
+        'rule': 'allow',
+        'port': '9100',
+        'proto': 'tcp',
+        'from_ip': ip
+      }) -%}
+  {%- endfor -%}
+  {{ rules }}
+
 ufw_rules: >-
   {{
     ufw_base_rules
     + (nginx_default_ufw_rules | default([]))
     + (nginx_budget_ufw_rules | default([]))
     + (actual_budget_ufw_rules | default([]))
+    + (node_exporter_ufw_rules | default([]))
   }}

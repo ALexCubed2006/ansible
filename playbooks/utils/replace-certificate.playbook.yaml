@@ -1,6 +1,6 @@
 ---
 - name: Replace ssl certificate
-  host: all
+  hosts: all
   become: true
 
   vars:

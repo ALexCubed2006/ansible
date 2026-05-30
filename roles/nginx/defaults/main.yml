@@ -1,7 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
-nginx_conf_path: /home/kali/devops/ansible/configs/nginx/nginx.conf
-default_conf_path: /home/kali/devops/ansible/configs/nginx/default
+nginx_conf_path: "{{ ansible_dir }}/roles/nginx/templates/default.j2"
+default_conf_path: "{{ ansible_dir }}/roles/nginx/templates/nginx.conf"
 
 nginx_conf_path_dest: /etc/nginx/nginx.conf
 default_conf_path_dest: /etc/nginx/sites-available/default
@@ -19,3 +19,5 @@ nginx_default_ufw_rules:
     rule: allow
     port: "443"
     proto: tcp
+
+nginx_budget_ufw_rules: []

@@ -1,4 +1,4 @@
-[DAFAULT]
+[DEFAULT]
 ignore-ip = 127.0.0.1/8 ::1 192.168.8.100
 bantime = -1
 findtime = 1d
