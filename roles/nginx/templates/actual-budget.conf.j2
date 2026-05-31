@@ -1,4 +1,4 @@
-{% set _budget_acl = budget_allowed_ips | default([]) %}
+{% set _budget_acl = allowed_ips | default([]) %}
 
 server {
     listen 80;

@@ -61,6 +61,24 @@
     force: true
   notify: Reload nginx
 
+- name: Deploy node_exporter vhost to sites-available
+  ansible.builtin.template:
+    src: node_exporter.conf.j2
+    dest: "/etc/nginx/sites-available/{{ node_exporter }}.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Enable node_exporter vhost
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ node_exporter }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ node_exporter }}.conf"
+    state: link
+    force: true
+  notify: Reload nginx
+
+
 - name: Validate nginx configuration
   ansible.builtin.command: nginx -t
   changed_when: false

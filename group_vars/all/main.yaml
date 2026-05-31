@@ -9,4 +9,4 @@ actual_port: 5006
 actual_data_dir: /opt/actual_data
 actual_version: latest
 
-budget_allowed_ips: "{{ vault_budget_allowed_ips | default([]) }}"
+budget_allowed_ips: "{{ vault_allowed_ips | default([]) }}"

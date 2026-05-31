@@ -1,12 +1,12 @@
 server {
-    listen 80;
+    listen 80 default_server;
     server_name {{ site_server_name }};
     return 308 https://$host$request_uri;
 }
 
 server {
-    listen 443 ssl http2;
-    server_name {{ site_server_name }};
+    listen 443 ssl http2 default_server;
+    server_name {{ site_server_name }} _;
 
     ssl_certificate     {{ nginx_pub_crt }};
     ssl_certificate_key {{ nginx_privkey }};
