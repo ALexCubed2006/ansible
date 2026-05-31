@@ -12,7 +12,7 @@ ufw_base_rules:
 
 node_exporter_ufw_rules: >-
   {%- set rules = [] -%}
-  {%- for ip in vault_budget_allowed_ips | default([]) -%}
+  {%- for ip in vault_allowed_ips | default([]) -%}
   {%- set _ = rules.append({
         'comment': 'node-exporter-' ~ ip,
         'rule': 'allow',
