@@ -21,6 +21,12 @@
     mode: '644'
   notify: Reload nginx
 
+- name: Disable Ubuntu default site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload nginx
+
 - name: Deploy site vhost
   ansible.builtin.template:
     src: default.j2

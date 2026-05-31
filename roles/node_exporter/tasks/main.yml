@@ -48,14 +48,6 @@
     mode: "0644"
   notify: Restart Node exporter
 
-- name: Copy web-config
-  ansible.builtin.copy:
-    src: web-config.yaml
-    dest: /etc/node_exporter/web-config.yaml
-    owner: "{{ node_exporter_user }}"
-    group: "{{ node_exporter_user }}"
-    mode: "0640"
-
 - name: Start Node exporter
   ansible.builtin.service:
     name: node_exporter

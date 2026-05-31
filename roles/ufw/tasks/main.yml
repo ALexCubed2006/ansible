@@ -31,6 +31,53 @@
     - ufw_enabled | bool
     - ufw_rules | length > 0
 
+- name: List numbered UFW rules for node_exporter public port
+  ansible.builtin.shell: |
+    ufw status numbered \
+      | grep -E '[[:space:]]{{ node_exporter_public_port }}(/tcp)?[[:space:]]' \
+      | sed -n 's/^\[\s*\([0-9]*\)\].*/\1/p' \
+      | sort -rn
+  register: _ufw_node_exporter_rule_nums
+  changed_when: false
+  failed_when: false
+  when:
+    - ufw_enabled | bool
+    - ufw_rebuild_node_exporter_rules | default(true) | bool
+    - allowed_ips | default([]) | length > 0
+
+- name: Remove existing UFW rules for node_exporter public port
+  ansible.builtin.command: "ufw --force delete {{ item }}"
+  loop: "{{ _ufw_node_exporter_rule_nums.stdout_lines | default([]) | select('match', '^[0-9]+$') | list }}"
+  when:
+    - ufw_enabled | bool
+    - ufw_rebuild_node_exporter_rules | default(true) | bool
+    - allowed_ips | default([]) | length > 0
+    - item | length > 0
+
+- name: Allow node_exporter public port from whitelisted IPs
+  community.general.ufw:
+    rule: allow
+    port: "{{ node_exporter_public_port }}"
+    proto: tcp
+    from_ip: "{{ item }}"
+    comment: "node-exporter-{{ item }}"
+  loop: "{{ allowed_ips }}"
+  when:
+    - ufw_enabled | bool
+    - ufw_rebuild_node_exporter_rules | default(true) | bool
+    - allowed_ips | length > 0
+
+- name: Deny any other traffic to node_exporter public port
+  community.general.ufw:
+    rule: deny
+    port: "{{ node_exporter_public_port }}"
+    proto: tcp
+    comment: node-exporter-deny-rest
+  when:
+    - ufw_enabled | bool
+    - ufw_rebuild_node_exporter_rules | default(true) | bool
+    - allowed_ips | length > 0
+
 - name: Enable ufw
   community.general.ufw:
     state: "{{ ufw_state | default('enabled') }}"

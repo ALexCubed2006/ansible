@@ -5,3 +5,5 @@ ufw_default_incoming: deny
 ufw_default_outgoing: allow
 ufw_state: enabled
 ufw_rules: []
+node_exporter_public_port: 9100
+ufw_rebuild_node_exporter_rules: true

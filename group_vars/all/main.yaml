@@ -9,4 +9,7 @@ actual_port: 5006
 actual_data_dir: /opt/actual_data
 actual_version: latest
 
+node_exporter_public_port: 9100
+node_exporter_upstream_port: 9101
+
 allowed_ips: "{{ vault_allowed_ips | default([]) }}"

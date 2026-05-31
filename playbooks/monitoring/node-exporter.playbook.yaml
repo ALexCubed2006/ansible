@@ -7,6 +7,6 @@
   - "{{ playbook_dir }}/../../vaults/allowed-ips.secrets.yaml"
 
   roles:
-    - nginx
     - node_exporter
+    - nginx
     - ufw

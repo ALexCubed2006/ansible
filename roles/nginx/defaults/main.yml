@@ -8,6 +8,8 @@ budget_server_name: budget.darpir.ru
 site_web_root: /var/www/html
 ssl_cert_dir: /var/www/ssl
 actual_port: 5006
+node_exporter_public_port: 9100
+node_exporter_upstream_port: 9101
 
 allowed_ips: "{{ vault_allowed_ips | default([]) }}"
 

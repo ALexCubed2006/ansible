@@ -1,11 +1,13 @@
 {% set _server_acl = allowed_ips | default([]) %}
 
 server {
-    listen 9100 ssl;
-    listen [::]:9100 ssl;
+    listen 0.0.0.0:{{ node_exporter_public_port }} ssl;
+    listen [::]:{{ node_exporter_public_port }} ssl;
     server_name {{ server_name }};
 
     {% if _server_acl | length > 0 %}
+        allow 127.0.0.1;
+        allow ::1;
     {% for ip in _server_acl %}
         allow {{ ip }};
     {% endfor %}
@@ -26,7 +28,7 @@ server {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 
     location / {
-        proxy_pass http://127.0.0.1:9100;
+        proxy_pass http://127.0.0.1:{{ node_exporter_upstream_port }};
         proxy_set_header Host              $host;
         proxy_set_header X-Real-IP         $remote_addr;
         proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;

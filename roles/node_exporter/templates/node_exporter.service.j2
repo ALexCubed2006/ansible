@@ -7,7 +7,7 @@ User={{ node_exporter_user }}
 Group={{ node_exporter_user }}
 Type=simple
 ExecStart={{ node_exporter_bin_path }} \
-  --web.listen-address=127.0.0.1:9100 \
+  --web.listen-address={{ node_exporter_listen_address }} \
   --collector.systemd \
   --collector.logind \
   --collector.processes
