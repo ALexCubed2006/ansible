@@ -2,7 +2,7 @@
 ---
 - name: Ensure loki directory present
   ansible.builtin.file:
-    path: "{{ loki_dir }}"
+    path: "{{ loki_dir }}/config"
     state: directory
     owner: root
     group: root
@@ -11,7 +11,7 @@
 - name: Copy loki config
   ansible.builtin.copy:
     src: loki.yaml
-    dest: "{{ loki_dir }}"
+    dest: "{{ loki_dir }}/config/loki.yaml"
     owner: root
     group: root
     mode: "0644"
@@ -39,7 +39,7 @@
     pull: missing
     remove_orphans: true
 
-- name: Wait for Actual Budget on localhost
+- name: Wait for loki on localhost
   ansible.builtin.wait_for:
     host: 127.0.0.1
     port: "{{ loki_port }}"

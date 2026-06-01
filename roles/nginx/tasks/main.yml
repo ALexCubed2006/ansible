@@ -84,6 +84,19 @@
     force: true
   notify: Reload nginx
 
+- name: Deploy loki vhost
+  ansible.builtin.template:
+    src: loki.conf.j2
+    dest: "/etc/nginx/sites-available/loki.conf"
+  notify: Reload nginx
+  
+- name: Enable loki vhost
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/loki.conf"
+    dest: "/etc/nginx/sites-enabled/loki.conf"
+    state: link
+    force: true
+  notify: Reload nginx
 
 - name: Validate nginx configuration
   ansible.builtin.command: nginx -t

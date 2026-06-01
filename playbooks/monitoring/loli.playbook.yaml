@@ -1,0 +1,12 @@
+---
+- name: Ensure Node exporter present
+  hosts: all
+  become: yes
+
+  vars_files:
+  - "{{ playbook_dir }}/../../vaults/allowed-ips.secrets.yaml"
+
+  roles:
+    - loki
+    - nginx
+    - ufw

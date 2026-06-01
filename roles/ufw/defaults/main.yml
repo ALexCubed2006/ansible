@@ -7,3 +7,7 @@ ufw_state: enabled
 ufw_rules: []
 node_exporter_public_port: 9100
 ufw_rebuild_node_exporter_rules: true
+
+loki_port: 3100
+ufw_rebuild_whitelist_ports: true
+ufw_whitelist_ports: []
