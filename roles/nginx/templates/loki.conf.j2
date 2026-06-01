@@ -3,7 +3,7 @@
 server {
     listen 0.0.0.0:{{ loki_port }} ssl;
     listen [::]:{{ loki_port }} ssl;
-    server_name darpir.ru;
+    server_name {{ server_name }};
 
     {% if _server_acl | length > 0 %}
         allow 127.0.0.1;

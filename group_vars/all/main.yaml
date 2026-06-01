@@ -1,9 +1,10 @@
 ansible_dir: "{{ lookup('env', 'ANSIBLE_DIR') | default('/home/kali/devops/ansible', true) }}"
 
-ssl_cert_dir: /var/www/ssl
+server_name: darpir.ru
 site_server_name: site.darpir.ru
 budget_server_name: budget.darpir.ru
 site_web_root: /var/www/html
+ssl_cert_dir: /var/www/ssl
 
 actual_port: 5006
 actual_data_dir: /opt/actual_data
