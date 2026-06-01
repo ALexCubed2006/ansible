@@ -2,14 +2,18 @@
 nginx_conf_path_dest: /etc/nginx/nginx.conf
 
 server_name: darpir.ru
-node_exporter: node_exporter
 site_server_name: site.darpir.ru
-budget_server_name: budget.darpir.ru
 site_web_root: /var/www/html
 ssl_cert_dir: /var/www/ssl
+
 actual_port: 5006
+budget_server_name: budget.darpir.ru
+
+node_exporter: node_exporter
 node_exporter_public_port: 9100
 node_exporter_upstream_port: 9101
+
+loki_port: 3100
 
 allowed_ips: "{{ vault_allowed_ips | default([]) }}"
 

@@ -1,0 +1,47 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Ensure loki directory present
+  ansible.builtin.file:
+    path: "{{ loki_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy loki config
+  ansible.builtin.copy:
+    src: loki.yaml
+    dest: "{{ loki_dir }}"
+    owner: root
+    group: root
+    mode: "0644"
+  
+- name: Deploy docker-compose config
+  ansible.builtin.template:
+    src: docker-compose.yaml.j2
+    dest: "{{ loki_dir }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create loki volume dir
+  ansible.builtin.file:
+    path: "{{ loki_dir }}/data"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Start loki
+  community.docker.docker_compose_v2:
+    project_src: "{{ loki_dir }}"
+    state: present
+    pull: missing
+    remove_orphans: true
+
+- name: Wait for Actual Budget on localhost
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ loki_port }}"
+    timeout: 120
+    delay: 5
