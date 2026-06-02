@@ -4,9 +4,24 @@ ufw_enabled: true
 ufw_default_incoming: deny
 ufw_default_outgoing: allow
 ufw_state: enabled
-ufw_rules: []
-node_exporter_public_port: 9100
 
-loki_port: 3100
+allowed_ips: "{{ vault_allowed_ips | default([]) }}"
+
+node_exporter_public_port: 9100
+loki_public_port: 3100
+
 ufw_rebuild_whitelist_ports: true
-ufw_whitelist_ports: []
+
+ufw_whitelist_ports:
+  - port: "{{ node_exporter_public_port }}"
+    prefix: node-exporter
+  - port: "{{ loki_public_port }}"
+    prefix: loki
+
+ufw_base_rules:
+  - comment: ssh-admin
+    rule: allow
+    port: "22"
+    proto: tcp
+
+ufw_rules: "{{ ufw_base_rules }}"

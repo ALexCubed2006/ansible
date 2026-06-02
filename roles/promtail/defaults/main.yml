@@ -3,7 +3,7 @@
 promtail_dir: /opt/promtail
 promtail_image: grafana/promtail:3.0.0
 
-promtail_loki_url: "http://127.0.0.1:{{ loki_port | default(3100) }}/loki/api/v1/push"
+promtail_loki_url: "http://127.0.0.1:{{ loki_upstream_port | default(3101) }}/loki/api/v1/push"
 
 promtail_host_label: "{{ ansible_facts['hostname'] }}"
 

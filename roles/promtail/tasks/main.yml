@@ -1,6 +1,14 @@
 #SPDX-License-Identifier: MIT-0
 ---
-- name: Ensure promtail directory present
+- name: Ensure promtail project directory present
+  ansible.builtin.file:
+    path: "{{ promtail_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Ensure promtail config directory present
   ansible.builtin.file:
     path: "{{ promtail_dir }}/config"
     state: directory
@@ -15,20 +23,24 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Restart promtail stack
 
 - name: Deploy promtail docker-compose
   ansible.builtin.template:
     src: docker-compose.yaml.j2
-    dest: "{{ promtail_dir }}"
+    dest: "{{ promtail_dir }}/docker-compose.yaml"
     owner: root
     group: root
     mode: "0644"
-  notify: Restart promtail stack
 
-- name: Start promtail
+- name: Remove stale promtail compose template artifact
+  ansible.builtin.file:
+    path: "{{ promtail_dir }}/docker-compose.yaml.j2"
+    state: absent
+
+- name: Ensure promtail stack is running
   community.docker.docker_compose_v2:
     project_src: "{{ promtail_dir }}"
     state: present
+    recreate: always
     pull: missing
     remove_orphans: true

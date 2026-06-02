@@ -1,8 +1,8 @@
 {% set _server_acl = allowed_ips | default([]) %}
 
 server {
-    listen 0.0.0.0:{{ loki_port }} ssl;
-    listen [::]:{{ loki_port }} ssl;
+    listen 0.0.0.0:{{ loki_public_port }} ssl;
+    listen [::]:{{ loki_public_port }} ssl;
     server_name {{ server_name }};
 
     {% if _server_acl | length > 0 %}
@@ -30,7 +30,7 @@ server {
     client_max_body_size 10m;
 
     location / {
-        proxy_pass http://127.0.0.1:{{ loki_port }};
+        proxy_pass http://127.0.0.1:{{ loki_upstream_port }};
         proxy_set_header Host              $host;
         proxy_set_header X-Real-IP         $remote_addr;
         proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;

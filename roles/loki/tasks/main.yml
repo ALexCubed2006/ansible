@@ -1,6 +1,14 @@
 #SPDX-License-Identifier: MIT-0
 ---
-- name: Ensure loki directory present
+- name: Ensure loki project directory present
+  ansible.builtin.file:
+    path: "{{ loki_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Ensure loki config directory present
   ansible.builtin.file:
     path: "{{ loki_dir }}/config"
     state: directory
@@ -8,42 +16,48 @@
     group: root
     mode: "0755"
 
-- name: Copy loki config
-  ansible.builtin.copy:
-    src: loki.yaml
+- name: Deploy loki config
+  ansible.builtin.template:
+    src: loki.yaml.j2
     dest: "{{ loki_dir }}/config/loki.yaml"
     owner: root
     group: root
     mode: "0644"
-  notify: Restart loki stack
-  
-- name: Deploy docker-compose config
+  register: _loki_config
+
+- name: Deploy loki docker-compose
   ansible.builtin.template:
     src: docker-compose.yaml.j2
-    dest: "{{ loki_dir }}"
+    dest: "{{ loki_dir }}/docker-compose.yaml"
     owner: root
     group: root
     mode: "0644"
-  notify: Restart loki stack
+  register: _loki_compose
 
-- name: Create loki volume dir
+- name: Remove stale loki compose template artifact
+  ansible.builtin.file:
+    path: "{{ loki_dir }}/docker-compose.yaml.j2"
+    state: absent
+
+- name: Create loki data directory
   ansible.builtin.file:
     path: "{{ loki_dir }}/data"
     state: directory
-    owner: root
-    group: root
+    owner: "10001"
+    group: "10001"
     mode: "0755"
 
-- name: Start loki
+- name: Ensure loki stack is running
   community.docker.docker_compose_v2:
     project_src: "{{ loki_dir }}"
     state: present
+    recreate: always
     pull: missing
     remove_orphans: true
 
 - name: Wait for loki on localhost
   ansible.builtin.wait_for:
     host: 127.0.0.1
-    port: "{{ loki_port }}"
+    port: "{{ loki_upstream_port }}"
     timeout: 120
     delay: 5

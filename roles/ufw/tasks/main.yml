@@ -39,7 +39,7 @@
   when:
     - ufw_enabled | bool
     - ufw_rebuild_whitelist_ports | default(true) | bool
-    - allowed_ips | default([]) | length > 0
+    - (allowed_ips | default(vault_allowed_ips | default([]))) | length > 0
 
 - name: Enable ufw
   community.general.ufw:

@@ -15,7 +15,7 @@ ufw_rebuild_whitelist_ports: true
 ufw_whitelist_ports:
   - port: "{{ node_exporter_public_port }}"
     prefix: node-exporter
-  - port: "{{ loki_port }}"
+  - port: "{{ loki_public_port }}"
     prefix: loki
 
 ufw_rules: >-

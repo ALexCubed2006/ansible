@@ -1,0 +1,16 @@
+- name: Deploy all roles at once
+  hosts: all
+  become: true
+
+  vars_files:
+    - "{{ playbook_dir }}/../../vaults/allowed-ips.secrets.yaml"
+
+  roles:
+    - journald
+    - actual_budget
+    - node_exporter
+    - promtail
+    - loki
+    - nginx
+    - f2b
+    - ufw
