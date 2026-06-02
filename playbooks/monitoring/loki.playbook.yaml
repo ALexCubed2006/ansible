@@ -1,12 +1,13 @@
 ---
-- name: Ensure Node exporter present
+- name: Deploy Loki and Promtail stack
   hosts: all
-  become: yes
+  become: true
 
   vars_files:
-  - "{{ playbook_dir }}/../../vaults/allowed-ips.secrets.yaml"
+    - "{{ playbook_dir }}/../../vaults/allowed-ips.secrets.yaml"
 
   roles:
     - loki
+    - promtail
     - nginx
     - ufw

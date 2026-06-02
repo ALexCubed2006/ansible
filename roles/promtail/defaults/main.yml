@@ -1,0 +1,35 @@
+#SPDX-License-Identifier: MIT-0
+---
+promtail_dir: /opt/promtail
+promtail_image: grafana/promtail:3.0.0
+
+promtail_loki_url: "http://127.0.0.1:{{ loki_port | default(3100) }}/loki/api/v1/push"
+
+promtail_host_label: "{{ ansible_facts['hostname'] }}"
+
+promtail_scrape_configs:
+  - job_name: journal
+    journal:
+      max_age: 12h
+      labels:
+        job: systemd-journal
+        host: "{{ promtail_host_label }}"
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: unit
+
+  - job_name: nginx
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: nginx
+          host: "{{ promtail_host_label }}"
+          __path__: /var/log/nginx/*.log
+
+  - job_name: auth
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: auth
+          host: "{{ promtail_host_label }}"
+          __path__: /var/log/auth.log

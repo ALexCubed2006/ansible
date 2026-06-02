@@ -32,7 +32,7 @@
     - ufw_rules | length > 0
 
 - name: Rebuild UFW whitelist rules for service ports (ALLOW then DENY)
-  ansible.builtin.include_tasks: whitelist-port.yml
+  ansible.builtin.include_tasks: whitelist-port.yaml
   loop: "{{ ufw_whitelist_ports }}"
   loop_control:
     loop_var: port_item

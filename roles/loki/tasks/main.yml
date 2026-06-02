@@ -15,6 +15,7 @@
     owner: root
     group: root
     mode: "0644"
+  notify: Restart loki stack
   
 - name: Deploy docker-compose config
   ansible.builtin.template:
@@ -23,6 +24,7 @@
     owner: root
     group: root
     mode: "0644"
+  notify: Restart loki stack
 
 - name: Create loki volume dir
   ansible.builtin.file:

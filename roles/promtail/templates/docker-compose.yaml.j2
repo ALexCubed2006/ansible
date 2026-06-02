@@ -1,0 +1,16 @@
+services:
+  promtail:
+    image: {{ promtail_image }}
+    container_name: promtail
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./config/promtail.yaml:/etc/promtail/config.yml:ro
+      - promtail_positions:/var/lib/promtail
+      - /var/log:/var/log:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+    command: -config.file=/etc/promtail/config.yml
+
+volumes:
+  promtail_positions:

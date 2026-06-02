@@ -1,8 +1,8 @@
 #SPDX-License-Identifier: MIT-0
 ---
-- name: Restart loki stack
+- name: Restart promtail stack
   community.docker.docker_compose_v2:
-    project_src: "{{ loki_dir }}"
+    project_src: "{{ promtail_dir }}"
     state: present
     recreate: always
     pull: missing

@@ -1,0 +1,38 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /var/lib/promtail/positions.yaml
+
+clients:
+  - url: {{ promtail_loki_url | quote }}
+
+scrape_configs:
+{% for job in promtail_scrape_configs %}
+  - job_name: {{ job.job_name | quote }}
+{% if job.journal is defined %}
+    journal:
+      max_age: {{ job.journal.max_age | quote }}
+      labels:
+{% for key, value in job.journal.labels.items() %}
+        {{ key }}: {{ value | quote }}
+{% endfor %}
+{% if job.relabel_configs is defined %}
+    relabel_configs:
+{% for rule in job.relabel_configs %}
+      - source_labels: {{ rule.source_labels | to_json }}
+        target_label: {{ rule.target_label | quote }}
+{% endfor %}
+{% endif %}
+{% elif job.static_configs is defined %}
+    static_configs:
+{% for cfg in job.static_configs %}
+      - targets: {{ cfg.targets | to_json }}
+        labels:
+{% for key, value in cfg.labels.items() %}
+          {{ key }}: {{ value | quote }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endfor %}
