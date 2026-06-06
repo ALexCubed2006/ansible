@@ -30,7 +30,6 @@ jobs:
             "roles/**/*.{yaml,yml}" \
             "inventories/**/*.{yaml,yml}" \
             ".github/workflows/*.{yaml,yml}" \
-            ".yamllint" \
             ".prettierrc.yaml"
 
   validate-configs:

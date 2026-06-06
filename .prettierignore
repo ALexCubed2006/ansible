@@ -1,0 +1,3 @@
+vaults/allowed-ips.secrets.yaml
+.yamllint
+roles/**/meta/main.yml
