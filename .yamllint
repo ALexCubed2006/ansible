@@ -1,0 +1,20 @@
+---
+extends: relaxed
+
+rules:
+  line-length:
+    max: 160
+    level: warning
+  document-start: disable
+  trailing-spaces:
+    level: warning
+  indentation:
+    level: warning
+  new-line-at-end-of-file:
+    level: warning
+  truthy:
+    level: warning
+    check-keys: false
+
+ignore: |
+  .git/
