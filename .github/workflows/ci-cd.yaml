@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request: 
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   validate-configs:
@@ -20,8 +21,11 @@ jobs:
           ansible-galaxy collection install -r requirements.yaml
 
       - name: Prepare vault_pass file
+        env:
+          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         run: |
-          printf '%s' "$ANSIBLE_VAULT_PASSWORD" > .vault_pass
+          umask 077
+          printf '%s' "$ANSIBLE_VAULT_PASSWORD" | tr -d '\n\r' > .vault_pass
 
       - name: Yamllint
         run: |
