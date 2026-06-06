@@ -2,6 +2,9 @@
   "private": true,
   "devDependencies": {
     "prettier": "^3.4.2",
-    "prettier-plugin-yaml": "^0.7.0"
+    "prettier-plugin-yaml": "^1.2.0"
+  },
+  "scripts": {
+    "format:check": "prettier --check \"playbooks/**/*.{yaml,yml}\" \"roles/**/*.{yaml,yml}\" \"inventories/**/*.{yaml,yml}\""
   }
 }

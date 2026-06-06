@@ -21,7 +21,7 @@ jobs:
           node-version: "20"
       
       - name: Install Prettier
-        run: npm install --no-save prettier prettier-plugin-yaml
+        run: npm install --no-save prettier@3.4.2 prettier-plugin-yaml@1.2.0
 
       - name: Prettier check
         run: |
