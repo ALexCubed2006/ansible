@@ -1,0 +1,15 @@
+---
+profile: min
+
+skip_list:
+  - meta-incorrect
+  - var-naming
+  - yaml
+  - name[template]
+  - risky-shell-pipe
+  - no-changed-when
+  - args
+
+exclude_paths:
+  - .cache/
+  - .github/
