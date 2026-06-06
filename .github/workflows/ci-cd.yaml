@@ -2,19 +2,45 @@ name: CI/CD pipeline
 
 on:
   push:
-    branches: [ main ]
-  pull_request: 
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: action/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      
+      - name: Install Prettier
+        run: npm install --no-save prettier prettier-plugin-yaml
+
+      - name: Prettier check
+        run: |
+          npx prettier --check \
+            "playbooks/**/*.{yaml,yml}" \
+            "roles/**/*.{yaml,yml}" \
+            "inventories/**/*.{yaml,yml}" \
+            ".github/workflows/*.{yaml,yml}" \
+            ".yamllint" \
+            ".prettierrc.yaml"
+
   validate-configs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-    
+
       - name: Install tools
         run: |
           pip install ansible ansible-lint yamllint
@@ -30,13 +56,13 @@ jobs:
       - name: Yamllint
         run: |
           yamllint -c .yamllint playbooks roles inventories
-      
+
       - name: Ansible-lint
         run: ansible-lint --offline playbooks/
         env:
           ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
           ANSIBLE_VAULT_PASSWORD_FILE: ${{ github.workspace }}/.vault_pass
-      
+
       - name: Remove vault password file
         if: always()
         run: rm -f .vault_pass
@@ -48,4 +74,3 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        

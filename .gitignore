@@ -1,3 +1,6 @@
 .vault_pass
 *.retry
 .ansible/
+
+node_modules/
+.prettier-cache

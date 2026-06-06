@@ -18,7 +18,7 @@
     dest: "{{ nginx_conf_path_dest }}"
     owner: root
     group: root
-    mode: '644'
+    mode: "644"
   notify: Reload nginx
 
 - name: Disable Ubuntu default site
@@ -89,7 +89,7 @@
     src: loki.conf.j2
     dest: "/etc/nginx/sites-available/loki.conf"
   notify: Reload nginx
-  
+
 - name: Enable loki vhost
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/loki.conf"
@@ -101,7 +101,7 @@
 - name: Validate nginx configuration
   ansible.builtin.command: nginx -t
   changed_when: false
-  
+
 - name: Ensure nginx is running
   ansible.builtin.service:
     name: nginx

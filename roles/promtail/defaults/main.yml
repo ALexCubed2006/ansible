@@ -15,7 +15,7 @@ promtail_scrape_configs:
         job: systemd-journal
         host: "{{ promtail_host_label }}"
     relabel_configs:
-      - source_labels: ['__journal__systemd_unit']
+      - source_labels: ["__journal__systemd_unit"]
         target_label: unit
 
   - job_name: nginx

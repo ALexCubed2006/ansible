@@ -18,5 +18,5 @@
     dest: "{{ jail_template_dest }}"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify: Restart Fail2ban

@@ -15,7 +15,7 @@
     owner: "{{ cert_owner }}"
     group: "{{ cert_owner }}"
     mode: "0400"
-    
+
   loop:
     - { source: "{{ privkey_src }}", destination: "{{ dest_dir }}/privkey.pem" }
     - { source: "{{ pub_src }}", destination: "{{ dest_dir }}/pub.pem" }
