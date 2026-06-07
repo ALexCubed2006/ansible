@@ -67,13 +67,13 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: [ prettier, validate-configs ]
+    needs: [prettier, validate-configs]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Install ansible
         run: |
           pip install ansible
@@ -91,8 +91,7 @@ jobs:
           ansible-playbook playbooks/all-roles.yaml \
             -i inventories/inventory.yaml \
             --vault-password-file .vault_pass
-      
+
       - name: Remove vault password file
         if: always()
         run: rm -f .vault_pass
-          
