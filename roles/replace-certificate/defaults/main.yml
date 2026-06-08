@@ -2,7 +2,8 @@
 ---
 dest_dir: /var/www/ssl
 
-cert_owner: www-data
+cert_owner: root
+cert_group: root
 
 privkey_src: /home/kali
 pub_src: /home/kali

@@ -5,7 +5,7 @@
     path: "{{ dest_dir }}"
     state: directory
     owner: "{{ cert_owner }}"
-    group: "{{ cert_owner }}"
+    group: "{{ cert_group }}"
     mode: "0700"
 
 - name: Copy certificate files
@@ -13,7 +13,7 @@
     src: "{{ item.source }}"
     dest: "{{ item.destination }}"
     owner: "{{ cert_owner }}"
-    group: "{{ cert_owner }}"
+    group: "{{ cert_group }}"
     mode: "0400"
 
   loop:
