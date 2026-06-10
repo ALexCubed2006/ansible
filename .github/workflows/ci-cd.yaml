@@ -1,4 +1,4 @@
-name: CI/CD pipeline
+name: CI pipeline
 
 on:
   push:
@@ -60,37 +60,6 @@ jobs:
         env:
           ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
           ANSIBLE_VAULT_PASSWORD_FILE: ${{ github.workspace }}/.vault_pass
-
-      - name: Remove vault password file
-        if: always()
-        run: rm -f .vault_pass
-
-  deploy:
-    runs-on: self-hosted
-    needs: [prettier, validate-configs]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install ansible
-        run: |
-          pip install ansible
-          ansible-galaxy collection install -r requirements.yaml
-
-      - name: Prepare vault_pass file
-        env:
-          ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
-        run: |
-          umask 077
-          printf '%s' "$ANSIBLE_VAULT_PASSWORD" | tr -d '\n\r' > .vault_pass
-
-      - name: Run all roles
-        run: |
-          ansible-playbook playbooks/all-roles.yaml \
-            -i inventories/inventory.yaml \
-            --vault-password-file .vault_pass
 
       - name: Remove vault password file
         if: always()
