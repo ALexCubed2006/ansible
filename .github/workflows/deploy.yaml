@@ -6,7 +6,7 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
@@ -14,6 +14,8 @@ jobs:
 
       - name: Install ansible
         run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
           pip install ansible
           ansible-galaxy collection install -r requirements.yaml
 
@@ -26,6 +28,7 @@ jobs:
 
       - name: Run all roles
         run: |
+          . .venv/bin/activate
           ansible-playbook playbooks/all-roles.yaml \
             -i inventories/inventory.yaml \
             --vault-password-file .vault_pass
